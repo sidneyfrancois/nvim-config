@@ -42,6 +42,55 @@ require("lazy").setup({
     })
     end
 },
+{
+  "nvim-tree/nvim-tree.lua",
+  version = "*",
+  lazy = false,
+  dependencies = {
+    "nvim-tree/nvim-web-devicons",
+  },
+  config = function()
+    require("nvim-tree").setup {}
+  end,
+},
+{
+  'nvimdev/dashboard-nvim',
+  event = 'VimEnter',
+  config = function()
+    require('dashboard').setup {
+      -- config
+    }
+  end,
+  dependencies = { {'nvim-tree/nvim-web-devicons'}}
+},
+{
+    "williamboman/mason.nvim",
+    build = ":MasonUpdate",
+    config = true,
+},
+{
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = { "neovim/nvim-lspconfig" },
+    config = function()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "html", "cssls","lua_ls", "ts_ls" },
+      })
+    end,
+},
+{
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
+        "vim",
+        "lua",
+        "vimdoc",
+        "html",
+        "css",
+        "javascript",
+        "typescript",
+      },
+    },
+}
 })
 
 if vim.g.neovide then
@@ -203,6 +252,28 @@ else
   vim.opt.incsearch=true
   vim.opt.wildmode = "longest:full,full" -- Command-line completion mode
   vim.opt.mouse="a"
+
+
+  -- disable netrw at the very start of your init.lua
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
+  -- empty setup using defaults
+  require("nvim-tree").setup()
+
+  require('lspconfig').html.setup {}
+  require('lspconfig').cssls.setup {}
+  require('lspconfig').lua_ls.setup {
+    settings = {
+        Lua = {
+        diagnostics = {
+            globals = {'vim'},
+        },
+        },
+    },
+  }
+  require('lspconfig').ts_ls.setup {}
+
+  vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 
   -- vim.cmd.colorscheme "catppuccin" -- colorscheme catppuccin " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
   vim.cmd.colorscheme "vscode" -- colorscheme catppuccin " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
